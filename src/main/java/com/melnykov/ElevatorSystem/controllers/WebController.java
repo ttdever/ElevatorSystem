@@ -11,4 +11,11 @@ public class WebController {
     public String index(Model model) {
         return "index";
     }
+
+    //End points to do:
+    //Creating of ElevatorController with selected count of elevators
+    //Visualization of ElevatorController and elevators
+    //Prompt for requesting an elevator
+    //Prompt for simulation (sending request ex. every 1 second)
+
 }

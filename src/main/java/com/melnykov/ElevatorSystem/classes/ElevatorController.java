@@ -1,5 +1,7 @@
 package com.melnykov.ElevatorSystem.classes;
 
+import com.melnykov.ElevatorSystem.exceptions.NoElevatorWithSuchIdException;
+import com.melnykov.ElevatorSystem.exceptions.NoElevatorsException;
 import com.melnykov.ElevatorSystem.exceptions.ToManyElevatorsException;
 import com.melnykov.ElevatorSystem.interfaces.Elevator;
 import com.melnykov.ElevatorSystem.interfaces.ElevatorSystem;
@@ -15,8 +17,9 @@ public class ElevatorController implements ElevatorSystem {
     private int elevatorsNum;
     private final List<Elevator> elevators;
 
-    public ElevatorController(int elevatorsNum, int floorsNum) {
+    public ElevatorController(int elevatorsNum) {
         if(elevatorsNum > elevatorsMaxNum) throw new ToManyElevatorsException();
+        else if(elevatorsNum <= 0) throw new NoElevatorsException();
 
         this.elevatorsNum = elevatorsNum;
         this.elevators = new ArrayList<>();
@@ -36,7 +39,12 @@ public class ElevatorController implements ElevatorSystem {
 
     @Override
     public void update(int elevatorId, int currentFloor, int targetFloor) {
-        this.elevators.get(elevatorId).setCurrentFloor(currentFloor);
+        try {
+            this.elevators.get(elevatorId).setCurrentFloor(currentFloor);
+        } catch (IndexOutOfBoundsException e) {
+            throw new NoElevatorWithSuchIdException(elevatorId);
+        }
+
         this.elevators.get(elevatorId).removeTarget(currentFloor);
         this.elevators.get(elevatorId).addTarget(targetFloor);
     }

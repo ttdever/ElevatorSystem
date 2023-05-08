@@ -25,9 +25,17 @@ public class BasicElevator implements Elevator {
     public void step() {
         if (this.targets.isEmpty()) this.direction = 0;
         else {
-            if (this.currentFloor == targets.get(0)) this.targets.remove(0);
-            else this.currentFloor += direction;
+            if (this.currentFloor == this.getCurrentTarget()) {
+                this.targets.remove(0);
+                if (this.targets.isEmpty()) this.direction = 0;
+            }
+            else {
+                this.currentFloor += direction;
+                if (this.currentFloor == this.getCurrentTarget()) this.targets.remove(0);
+            }
         }
+
+        if (this.targets.isEmpty()) this.direction = 0;
     }
 
     @Override
