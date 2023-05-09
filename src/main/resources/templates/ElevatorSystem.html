@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Elevator Control Panel</title>
+    <style>
+        h1, h2 {
+            color: #fff;
+        }
+        table, th, td {
+          border-spacing: 10px, 10px;
+          border: 1px solid #fff;
+          border-collapse: collapse;
+          text-align : center;
+        }
+    </style>
+
+    <script>
+        function pickUp() {
+            var floorNumber = document.getElementById('floor').value;
+            var direction = document.getElementById("direction").innerHTML == "up" ? "1" : "-1";
+
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open( "POST", "/pick-up?requestedFloor=" + floorNumber + "&direction=" + direction, false );
+            xmlHttp.send(null);
+        }
+
+        function parseElevatorsStatuses(data) {
+            //ID, Obecny numer, Docelowy numer
+            for(var i = 0; i < data.length; i++) {
+                document.getElementById('statusFloor'+i).innerHTML = data[i][1];
+                document.getElementById('statusTarget'+i).innerHTML = data[i][2];
+            }
+        }
+
+        setInterval(function(){
+            if(!document.getElementById('simulationStatus').checked) return;
+
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open( "GET", "/step", false );
+            xmlHttp.send(null);
+            parseElevatorsStatuses(JSON.parse(xmlHttp.responseText));
+        }, 1000);
+
+        function createElevatorSystem(numOfElevators) {
+            if(numOfElevators <= 0 || numOfElevators > 16) {
+                alert("Allowed elevators count is from 1 to 16");
+            }
+
+            document.getElementById('simulationStatus').checked = false;
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open( "POST", "/elevatorSystem?numOfElevators="+numOfElevators, false );
+            xmlHttp.onreadystatechange =
+                function() {
+                    if (this.readyState == 4 && this.status == 204) window.location.reload();
+                };
+            xmlHttp.send(null);
+        }
+
+
+    </script>
+</head>
+<body bgcolor="#111">
+<div>
+    <h1>Elevator Control Panel</h1>
+    <h2>Number of elevators: <span th:text="${elevatorController.elevatorsNum}"></span></h2>
+    <table>
+        <tbody>
+        <tr>
+            <th><h2>Elevator #</h2></th>
+            <th><h2>Current Floor</h2></th>
+            <th><h2>Current Target</h2></th>
+        </tr>
+        <tr th:id="${'elevator' + elevator.id}" th:each="elevator : ${elevatorController.elevators}">
+            <td><h2 th:text="${elevator.id}"></h2></td>
+            <td><h2 th:id="${'statusFloor' + elevator.id}" th:text="${elevator.currentFloor}"></h2></td>
+            <td><h2 th:id="${'statusTarget' + elevator.id}" th:text="${elevator.currentTarget} ?: '-'"></h2></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <h2 style="display: inline-block">Select a floor: </h2>
+    <input id="floor" type="number" step="1" onchange="this.value = parseInt(this.value);" style="margin-left: 20px"/>
+    <button id="direction" style="display: inline-block" onclick="this.innerText = this.innerText === 'up' ? 'down' : 'up'">up</button>
+    <button onclick="pickUp()" type="button">Pick Up</button>
+</div>
+
+<div>
+    <h2 style="margin-bottom: 10px">Create new control panel: </h2>
+    <h2 style="display: inline-block">Number of floors (1 - 16): </h2>
+    <input id="numOfElevators" type="number" min="1" max="16" step="1" onchange="this.value = parseInt(this.value);" style="margin-left: 20px"/>
+    <button type="button" onclick="createElevatorSystem(document.getElementById('numOfElevators').value)">Create!</button>
+</div>
+
+<div>
+    <h2 style="display: inline-block">Simulation status: </h2>
+    <input id="simulationStatus" type="checkbox">
+</div>
+</body>
+</html>
