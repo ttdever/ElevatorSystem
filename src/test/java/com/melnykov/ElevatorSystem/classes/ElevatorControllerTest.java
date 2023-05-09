@@ -18,7 +18,7 @@ class ElevatorControllerTest {
 
     @BeforeEach
     public void prepare() {
-        this.elevatorController = new ElevatorController(3);
+        this.elevatorController = ElevatorController.getInstance(3);
     }
 
     @Test
@@ -32,12 +32,12 @@ class ElevatorControllerTest {
 
     @Test
     public void constructor_ShouldThrowToManyElevatorsException() {
-        assertThrows(ToManyElevatorsException.class, () -> this.elevatorController = new ElevatorController(17));
+        assertThrows(ToManyElevatorsException.class, () -> this.elevatorController = ElevatorController.getInstance(17));
     }
 
     @Test
     public void constructor_ShouldThrowNoElevatorsException() {
-        assertThrows(NoElevatorsException.class, () -> this.elevatorController = new ElevatorController(0));
+        assertThrows(NoElevatorsException.class, () -> this.elevatorController = ElevatorController.getInstance(0));
     }
 
     @Test

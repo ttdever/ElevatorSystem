@@ -4,6 +4,7 @@ import com.melnykov.ElevatorSystem.interfaces.Elevator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 public class BasicElevator implements Elevator {
@@ -54,8 +55,8 @@ public class BasicElevator implements Elevator {
     }
 
     @Override
-    public int getCurrentTarget() {
-        return this.targets.get(0);
+    public Integer getCurrentTarget() {
+        return this.targets.isEmpty() ? null : this.targets.get(0);
     }
 
     @Override
