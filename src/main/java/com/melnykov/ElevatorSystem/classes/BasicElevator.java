@@ -10,13 +10,11 @@ public class BasicElevator implements Elevator {
 
     private int id;
     private int currentFloor;
-    private int direction;
     private List<ElevatorRequest> targets;
 
     public BasicElevator(int id, int startFloor) {
         this.id = id;
         this.currentFloor = startFloor;
-        this.direction = 0;
         this.targets = new ArrayList<>();
     }
 

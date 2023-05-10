@@ -29,9 +29,9 @@ public class ElevatorSystemController {
     }
 
     @PostMapping("/elevatorSystem")
-    public ResponseEntity createNewElevatorSystem(@RequestParam int numOfElevators) {
+    public ResponseEntity changeNumberOfElevators(@RequestParam int numOfElevators) {
         try {
-            this.elevatorSystem = ElevatorController.getInstance(numOfElevators);
+            this.elevatorSystem = new ElevatorController(numOfElevators);
             webController.setElevatorSystem(this.elevatorSystem);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Elevator info</title>
+    <link th:href="@{/style.css}" rel="stylesheet">
+    <script type="text/javascript" th:src="@{/script.js}"></script>
+</head>
+<body bgcolor="#111">
+
+<div>
+    <h1>Elevator information:</h1>
+    <h1>ID:  <span id="elevatorId" th:text="${elevator.id}"></span></h1>
+    <h1 th:text="${'Current Floor: ' + elevator.currentFloor}"></h1>
+    <h1 th:if="${not #lists.isEmpty(elevator.targets)}" th:text="${'Current target: ' + elevator.targets[0].targetFloor}"></h1>
+    <h1 th:if="${#lists.isEmpty(elevator.targets)}">No targets left</h1>
+    <h1>List of targets:</h1>
+
+    <table >
+        <thead>
+        <tr>
+            <th><h2>Floor</h2></th>
+            <th><h2>Direction</h2></th>
+        </tr>
+        </thead>
+
+        <tbody>
+            <tr th:if="${not #lists.isEmpty(elevator.targets)}" th:each="target : ${elevator.targets}">
+                <td><h2 th:text="${target.targetFloor}"></h2></td>
+                <td><h2 th:text="${target.direction == 1 ? '↑' : '↓'}"></h2></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <h2 style="display: inline-block">Simulation status: </h2>
+    <input id="simulationStatus" type="checkbox">
+</div>
+
+</body>
+</html>

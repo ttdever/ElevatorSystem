@@ -9,17 +9,19 @@ import com.melnykov.ElevatorSystem.interfaces.ElevatorSystem;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @Component
 public class ElevatorController implements ElevatorSystem {
-    private static ElevatorSystem instance = null;
     private final int elevatorsMaxNum = 16;
-    private final int elevatorsNum;
-    private final List<Elevator> elevators;
+    private int elevatorsNum;
+    private List<Elevator> elevators;
 
-    private ElevatorController(@Value("3") int elevatorsNum) {
+    public ElevatorController(@Value("1") int elevatorsNum) {
         if(elevatorsNum > elevatorsMaxNum) throw new ToManyElevatorsException();
         else if(elevatorsNum <= 0) throw new NoElevatorsException();
 
@@ -30,10 +32,6 @@ public class ElevatorController implements ElevatorSystem {
         }
     }
 
-    public static ElevatorSystem getInstance(int elevatorsNum) {
-        instance = new ElevatorController(elevatorsNum);
-        return instance;
-    }
     @Override
     public void pickup(int targetFloor, int direction) {
         if(direction != 1 && direction != -1) throw new WrongDirectionException();
@@ -44,7 +42,6 @@ public class ElevatorController implements ElevatorSystem {
         for (Elevator e : elevators) {
             List<ElevatorRequest> requestList = e.getTargets();
             int elevatorWayToTarget = 0;
-
             boolean crossTargetFloor = false;
 
             for(ElevatorRequest request : requestList) {
@@ -64,6 +61,8 @@ public class ElevatorController implements ElevatorSystem {
         }
 
         Elevator bestElevator = elevatorFloorsToTargetMap.entrySet().stream().min(Map.Entry.comparingByValue()).get().getKey();
+        if(bestElevator.getTargets().isEmpty()) indexToInsertTargetIn = 0;
+
         bestElevator.insertTarget(new ElevatorRequest(targetFloor, direction, false), indexToInsertTargetIn);
     }
 
@@ -110,7 +109,16 @@ public class ElevatorController implements ElevatorSystem {
         return this.elevators;
     }
 
-    public int getElevatorsNum() {
-        return elevatorsNum;
+    @Override
+    public void changeElevatorsNumber(int elevatorsNum) {
+        if(elevatorsNum > elevatorsMaxNum) throw new ToManyElevatorsException();
+        else if(elevatorsNum <= 0) throw new NoElevatorsException();
+
+        this.elevatorsNum = elevatorsNum;
+        this.elevators.clear();
+        this.elevators = new ArrayList<>();
+        for(int i = 0; i < elevatorsNum; i++) {
+            this.elevators.add(new BasicElevator(i, 0));
+        }
     }
 }

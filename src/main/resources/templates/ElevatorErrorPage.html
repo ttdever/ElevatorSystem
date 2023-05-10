@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Elevator info</title>
+    <link th:href="@{/style.css}" rel="stylesheet">
+
+</head>
+<body bgcolor="#111">
+    <h1 th:text="${errorMessage}"></h1>
+    <h2 th:text="${'There are ' + availableElevators} + ' elevators'"></h2>
+    <h2 th:text="${'With ids from 0 to ' + (availableElevators - 1)}"></h2>
+</body>
+</html>

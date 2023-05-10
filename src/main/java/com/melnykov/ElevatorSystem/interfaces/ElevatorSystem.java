@@ -8,5 +8,6 @@ public interface ElevatorSystem {
     void step();
     int[][] status();
     List<Elevator> getElevators();
+    void changeElevatorsNumber(int elevatorsNum);
 
 }
