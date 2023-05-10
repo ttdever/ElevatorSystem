@@ -5,7 +5,6 @@ import com.melnykov.ElevatorSystem.exceptions.NoElevatorsException;
 import com.melnykov.ElevatorSystem.exceptions.ToManyElevatorsException;
 import com.melnykov.ElevatorSystem.interfaces.Elevator;
 import com.melnykov.ElevatorSystem.interfaces.ElevatorSystem;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -16,13 +15,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class ElevatorControllerTest {
     private ElevatorSystem elevatorController;
 
-    @BeforeEach
-    public void prepare() {
-        this.elevatorController = ElevatorController.getInstance(3);
-    }
-
     @Test
     public void constructor_ShouldCreateElevatorControllerWith3ElevatorsAndRightIds() {
+        elevatorController = ElevatorController.getInstance(3);
         assertEquals(3, elevatorController.getElevators().size());
         List<Elevator> elevators = elevatorController.getElevators();
         for(int i = 0; i < 3; i++) {
@@ -42,21 +37,24 @@ class ElevatorControllerTest {
 
     @Test
     public void update_ShouldCorrectlyUpdateElevator() {
+        elevatorController = ElevatorController.getInstance(1);
         this.elevatorController.update(0, 3, 4);
         Elevator elevator0 = elevatorController.getElevators().get(0);
 
         assertEquals(0, elevator0.getId());
         assertEquals(3, elevator0.getCurrentFloor());
-        assertEquals(4, elevator0.getCurrentTarget());
+        assertEquals(4, elevator0.getCurrentTarget().getTargetFloor());
     }
 
     @Test
     public void update_ShouldThrowNoElevatorWithSuchIdException() {
+        elevatorController = ElevatorController.getInstance(1);
         assertThrows(NoElevatorWithSuchIdException.class, () -> this.elevatorController.update(4, 1, 1));
     }
 
     @Test
     public void step_ShouldCorrectlyStepElevatorToRequestedFloor() {
+        elevatorController = ElevatorController.getInstance(1);
         Elevator elevator0 = elevatorController.getElevators().get(0);
         elevatorController.pickup(3, 1);
 
@@ -66,40 +64,37 @@ class ElevatorControllerTest {
             elevatorController.step();
             counter++;
         }
+
         assertEquals(3, elevator0.getCurrentFloor());
-        assertEquals(0, elevator0.getDirection());
     }
 
     @Test
-    public void pickup_ShouldSetTarget3andPositiveDirection() {
+    public void pickup_ShouldAssignTargetToElevator() {
+        elevatorController = ElevatorController.getInstance(1);
+        elevatorController.pickup(3, 1);
 
-        //Ask for elevator to go to floor 3
-        this.elevatorController.pickup(3, 1);
-        Elevator elevator0 = this.elevatorController.getElevators().get(0);
-        //Elevator 0 was selected:
+        Elevator elevator0 = elevatorController.getElevators().get(0);
         assertEquals(1, elevator0.getTargets().size());
-        assertEquals(3, elevator0.getTargets().get(0).intValue());
-        assertEquals(1, elevator0.getDirection());
+        assertEquals(3, elevator0.getCurrentTarget().getTargetFloor());
+    }
 
-        //Wait for elevator 0 to finish its move:
-        int passedFloorCounter = 0;
-        while (elevator0.isMoving()) {
-            passedFloorCounter++;
-            elevatorController.step();
-        }
-        //Check if elevator 0 has passed correct num of floor:
-        assertEquals(3, passedFloorCounter);
+    @Test
+    public void pickup_ShouldAssignTargetToNearestElevator() {
+        elevatorController = ElevatorController.getInstance(2);
+        elevatorController.update(0, 10, 10);
+        elevatorController.update(1, 1, 1);
+        elevatorController.step();
+        elevatorController.pickup(2, 1);
 
-        //Now elevator 0 is at the 3 floor, lets ask for pickup at 1 floor (it must call elevator 1 in this case):
-        elevatorController.pickup(1, 1);
         Elevator elevator1 = elevatorController.getElevators().get(1);
+
         assertEquals(1, elevator1.getTargets().size());
-        assertEquals(1, elevator1.getTargets().get(0).intValue());
-        assertEquals(1, elevator1.getDirection());
+        assertEquals(2, elevator1.getCurrentTarget().getTargetFloor());
     }
 
     @Test
     public void getElevators_ShouldReturnListOfElevatorsWithCorrectIds() {
+        elevatorController = ElevatorController.getInstance(16);
         List<Elevator> elevators = elevatorController.getElevators();
         int numOfElevators = elevators.size();
         for(int i = 0; i < numOfElevators; i++) {
@@ -109,6 +104,7 @@ class ElevatorControllerTest {
 
     @Test
     public void status_ShouldReturnRightStatusesOfElevators() {
+        elevatorController = ElevatorController.getInstance(3);
         elevatorController.update(0, 0, 0);
         elevatorController.update(1, 1, 1);
         elevatorController.update(2, 2, 2);

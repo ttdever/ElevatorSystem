@@ -4,7 +4,6 @@ import com.melnykov.ElevatorSystem.interfaces.Elevator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 public class BasicElevator implements Elevator {
@@ -12,7 +11,7 @@ public class BasicElevator implements Elevator {
     private int id;
     private int currentFloor;
     private int direction;
-    private List<Integer> targets;
+    private List<ElevatorRequest> targets;
 
     public BasicElevator(int id, int startFloor) {
         this.id = id;
@@ -24,19 +23,14 @@ public class BasicElevator implements Elevator {
 
     @Override
     public void step() {
-        if (this.targets.isEmpty()) this.direction = 0;
-        else {
-            if (this.currentFloor == this.getCurrentTarget()) {
-                this.targets.remove(0);
-                if (this.targets.isEmpty()) this.direction = 0;
-            }
-            else {
-                this.currentFloor += direction;
-                if (this.currentFloor == this.getCurrentTarget()) this.targets.remove(0);
-            }
+        if(targets.isEmpty()) return;
+
+        if(this.currentFloor == this.getCurrentTarget().getTargetFloor()) {
+            this.targets.remove(this.getCurrentTarget());
+            return;
         }
 
-        if (this.targets.isEmpty()) this.direction = 0;
+        this.currentFloor += this.getCurrentTarget().getTargetFloor() > this.currentFloor ? 1 : -1;
     }
 
     @Override
@@ -45,22 +39,22 @@ public class BasicElevator implements Elevator {
     }
 
     @Override
-    public void addTarget(int target) {
-        if (!this.targets.contains(target)) this.targets.add(target);
+    public void addTarget(ElevatorRequest elevatorRequest) {
+        targets.add(elevatorRequest);
     }
 
     @Override
-    public void removeTarget(int target) {
-        this.targets.remove(Integer.valueOf(target));
+    public void insertTarget(ElevatorRequest elevatorRequest, int index) {
+        targets.add(index, elevatorRequest);
     }
 
     @Override
-    public Integer getCurrentTarget() {
+    public ElevatorRequest getCurrentTarget() {
         return this.targets.isEmpty() ? null : this.targets.get(0);
     }
 
     @Override
-    public List<Integer> getTargets() {
+    public List<ElevatorRequest> getTargets() {
         return this.targets;
     }
 
@@ -70,18 +64,8 @@ public class BasicElevator implements Elevator {
     }
 
     @Override
-    public void setDirection(int direction) {
-        this.direction = direction;
-    }
-
-    @Override
-    public int getDirection() {
-        return this.direction;
-    }
-
-    @Override
     public int[] getStatus() {
-        return new int[]{this.id, this.currentFloor, this.targets.isEmpty() ? this.currentFloor : this.targets.get(0)};
+        return new int[]{this.id, this.currentFloor, this.targets.isEmpty() ? this.currentFloor : this.targets.get(0).getTargetFloor()};
     }
 
     @Override
