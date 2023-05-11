@@ -2,15 +2,12 @@ package com.melnykov.ElevatorSystem.classes;
 
 public class ElevatorRequest {
 
-    private int targetFloor;
-    private int direction;
+    private final int targetFloor;
+    private final int direction;
 
-    private boolean isMovingToMostFrequentFloor;
-
-    public ElevatorRequest(int targetFloor, int direction, boolean isMovingToMostFrequentFloor) {
+    public ElevatorRequest(int targetFloor, int direction) {
         this.targetFloor = targetFloor;
         this.direction = direction;
-        this.isMovingToMostFrequentFloor = isMovingToMostFrequentFloor;
     }
 
     public int getTargetFloor() {
@@ -19,9 +16,5 @@ public class ElevatorRequest {
 
     public int getDirection() {
         return direction;
-    }
-
-    public boolean isMovingToMostFrequentFloor() {
-        return isMovingToMostFrequentFloor;
     }
 }

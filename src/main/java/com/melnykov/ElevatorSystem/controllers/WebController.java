@@ -25,7 +25,7 @@ public class WebController {
             return "Elevator";
         } catch (IndexOutOfBoundsException e) {
             model.addAttribute("errorMessage", "There is no elevator with id " + id);
-            model.addAttribute("availableElevators", elevatorSystem.getElevators().size() + 1);
+            model.addAttribute("availableElevators", elevatorSystem.getElevators().size());
             return "ElevatorErrorPage";
         }
     }

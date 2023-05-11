@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" http-equiv="pragma" content="no-cache">
     <title>Elevator Control Panel</title>
     <link th:href="@{/style.css}" rel="stylesheet">
     <script type="text/javascript" th:src="@{/ElevatorSystemScript.js}"></script>
@@ -10,6 +10,8 @@
 <div>
     <h1>Elevator Control Panel</h1>
     <h2 th:text="${'Number of elevators: ' + elevatorController.elevators.size()}"></h2>
+    <h2 style="display: inline-block">Simulation status: </h2>
+    <input id="simulationStatus" type="checkbox">
     <table id="elevatorTable">
         <thead>
             <tr>
@@ -42,11 +44,6 @@
     <h2 style="display: inline-block">Number of elevators (1 - 16): </h2>
     <input id="numOfElevators" type="number" min="1" max="16" step="1" onchange="this.value = parseInt(this.value);" style="margin-left: 20px"/>
     <button type="button" onclick="createElevatorSystem(document.getElementById('numOfElevators').value)">Create!</button>
-</div>
-
-<div>
-    <h2 style="display: inline-block">Simulation status: </h2>
-    <input id="simulationStatus" type="checkbox">
 </div>
 </body>
 </html>

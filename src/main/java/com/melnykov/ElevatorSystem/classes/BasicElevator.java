@@ -8,9 +8,9 @@ import java.util.List;
 
 public class BasicElevator implements Elevator {
 
-    private int id;
+    private final int id;
     private int currentFloor;
-    private List<ElevatorRequest> targets;
+    private final List<ElevatorRequest> targets;
 
     public BasicElevator(int id, int startFloor) {
         this.id = id;

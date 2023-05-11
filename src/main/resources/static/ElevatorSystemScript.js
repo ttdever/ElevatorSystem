@@ -2,9 +2,9 @@ function pickUp() {
     var floorNumber = document.getElementById('floor').value;
     var direction = document.getElementById("direction").innerHTML == "up" ? "1" : "-1";
 
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "POST", "/pick-up?requestedFloor=" + floorNumber + "&direction=" + direction, false );
-    xmlHttp.send(null);
+    var pickupRequest = new XMLHttpRequest();
+    pickupRequest.open( "POST", "/pick-up?requestedFloor=" + floorNumber + "&direction=" + direction, false );
+    pickupRequest.send(null);
 }
 
 function parseElevatorsStatuses(data) {
@@ -19,10 +19,15 @@ function parseElevatorsStatuses(data) {
 
 setInterval(function(){
     if(!document.getElementById('simulationStatus').checked) return;
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "GET", "/step", false );
-    xmlHttp.send(null);
-    parseElevatorsStatuses(JSON.parse(xmlHttp.responseText));
+
+    var stepRequest = new XMLHttpRequest();
+    stepRequest.open( "POST" , "/step", false);
+    stepRequest.send(null);
+
+    var elevatorSystemInfoRequest = new XMLHttpRequest();
+    elevatorSystemInfoRequest.open( "GET", "/elevatorSystemInfo", false );
+    elevatorSystemInfoRequest.send(null);
+    parseElevatorsStatuses(JSON.parse(elevatorSystemInfoRequest.responseText));
 }, 1000);
 
 function createElevatorSystem(numOfElevators) {
@@ -31,12 +36,12 @@ function createElevatorSystem(numOfElevators) {
     }
 
     document.getElementById('simulationStatus').checked = false;
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "POST", "/elevatorSystem?numOfElevators="+numOfElevators, false );
-    xmlHttp.onreadystatechange =
+    var creationRequest = new XMLHttpRequest();
+    creationRequest.open( "POST", "/elevatorSystem?numOfElevators="+numOfElevators, false );
+    creationRequest.onreadystatechange =
         function() {
             if (this.readyState == 4 && this.status == 204) window.location.reload();
         };
-    xmlHttp.send(null);
+    creationRequest.send(null);
 }
 

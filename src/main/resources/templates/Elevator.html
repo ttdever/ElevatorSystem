@@ -1,22 +1,33 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" http-equiv="pragma" content="no-cache">
     <title>Elevator info</title>
     <link th:href="@{/style.css}" rel="stylesheet">
-    <script type="text/javascript" th:src="@{/script.js}"></script>
+    <script type="text/javascript" th:src="@{/Elevator.js}"></script>
 </head>
 <body bgcolor="#111">
 
 <div>
     <h1>Elevator information:</h1>
+
+    <h2 style="display: inline-block">Simulation status: </h2>
+    <input id="simulationStatus" type="checkbox">
+
+    <h2>Update: </h2>
+    <h2 style="display: inline-block">Current Floor: </h2>
+    <input id="floor" type="number" step="1" onchange="this.value = parseInt(this.value);" style="max-width: 40px"/>
+    <h2 style="display: inline-block; margin-left: 40px">Target Floor: </h2>
+    <input id="target" type="number" step="1" onchange="this.value = parseInt(this.value);" style="max-width: 40px"/>
+    <button type="button" onclick="update(document.getElementById('elevatorId').innerHTML, document.getElementById('floor').value, document.getElementById('target').value)">Update!</button>
+
     <h1>ID:  <span id="elevatorId" th:text="${elevator.id}"></span></h1>
-    <h1 th:text="${'Current Floor: ' + elevator.currentFloor}"></h1>
-    <h1 th:if="${not #lists.isEmpty(elevator.targets)}" th:text="${'Current target: ' + elevator.targets[0].targetFloor}"></h1>
+    <h1 th:id="${'currentFloor' + elevator.id}" th:text="${'Current Floor: ' + elevator.currentFloor}"></h1>
+    <h1 th:id="${'currentTarget' + elevator.id}" th:if="${not #lists.isEmpty(elevator.targets)}" th:text="${'Current Target: ' + elevator.targets[0].targetFloor}"></h1>
     <h1 th:if="${#lists.isEmpty(elevator.targets)}">No targets left</h1>
     <h1>List of targets:</h1>
 
-    <table >
+    <table id="targetsTable">
         <thead>
         <tr>
             <th><h2>Floor</h2></th>
@@ -32,11 +43,5 @@
         </tbody>
     </table>
 </div>
-
-<div>
-    <h2 style="display: inline-block">Simulation status: </h2>
-    <input id="simulationStatus" type="checkbox">
-</div>
-
 </body>
 </html>

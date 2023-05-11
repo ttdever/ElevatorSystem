@@ -1,6 +1,5 @@
 package com.melnykov.ElevatorSystem.controllers;
 
-import com.melnykov.ElevatorSystem.classes.ElevatorController;
 import com.melnykov.ElevatorSystem.interfaces.ElevatorSystem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,17 +21,21 @@ public class ElevatorSystemController {
         elevatorSystem.pickup(requestedFloor, direction);
     }
 
-    @GetMapping("/step")
-    public ResponseEntity<int[][]> step() {
+    @PostMapping("/step")
+    public ResponseEntity step() {
         elevatorSystem.step();
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/elevatorSystemInfo")
+    public ResponseEntity<int[][]> getElevatorControllerInfo() {
         return ResponseEntity.ok(elevatorSystem.status());
     }
 
     @PostMapping("/elevatorSystem")
     public ResponseEntity changeNumberOfElevators(@RequestParam int numOfElevators) {
         try {
-            this.elevatorSystem = new ElevatorController(numOfElevators);
-            webController.setElevatorSystem(this.elevatorSystem);
+            this.elevatorSystem.changeElevatorsNumber(numOfElevators);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getLocalizedMessage());

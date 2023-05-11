@@ -61,9 +61,9 @@ public class ElevatorController implements ElevatorSystem {
         }
 
         Elevator bestElevator = elevatorFloorsToTargetMap.entrySet().stream().min(Map.Entry.comparingByValue()).get().getKey();
-        if(bestElevator.getTargets().isEmpty()) indexToInsertTargetIn = 0;
+        if(bestElevator.getTargets().size() > indexToInsertTargetIn) indexToInsertTargetIn = bestElevator.getTargets().size() - 1;
 
-        bestElevator.insertTarget(new ElevatorRequest(targetFloor, direction, false), indexToInsertTargetIn);
+        bestElevator.insertTarget(new ElevatorRequest(targetFloor, direction), indexToInsertTargetIn);
     }
 
     private boolean isAbleToPickUpOnWay(int currentFloor, int currentTargetFloor, int currentDirection, int requestedFloor, int requestedFloorDirection) {
@@ -87,7 +87,8 @@ public class ElevatorController implements ElevatorSystem {
             throw new NoElevatorWithSuchIdException(elevatorId);
         }
 
-        this.elevators.get(elevatorId).addTarget(new ElevatorRequest(targetFloor, currentFloor, false));
+        this.elevators.get(elevatorId).getTargets().clear();
+        this.elevators.get(elevatorId).addTarget(new ElevatorRequest(targetFloor, currentFloor));
     }
 
     @Override
